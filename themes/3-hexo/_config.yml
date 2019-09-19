@@ -213,8 +213,8 @@ gentie:
 gitalk:
   githubID: huaxiapanda
   repo: huaxiapanda.github.io
-  ClientID:
-  ClientSecret:
+  ClientID: 7d9759765ac1178f679d
+  ClientSecret: 5925f0feeb551b1d30264339fac3149599084b6f
   adminUser: huaxiapanda
   distractionFreeMode: true
   language: zh-CN
