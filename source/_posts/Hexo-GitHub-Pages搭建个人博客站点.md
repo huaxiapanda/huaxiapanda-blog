@@ -10,7 +10,7 @@ tags: hexo,GitHub Pages
   * Git
   * NodeJS
 
-  **这里默认搭建已经全部安装好了上述环境，不会的自行百度!对于程序员而言，这些不难的！其次我本身使用的深度国产操作系统(国产Linux),其他操作系统操作步骤一样！略有差别**
+**这里默认搭建已经全部安装好了上述环境，不会的自行百度!对于程序员而言，这些不难的！其次我本身使用的深度国产操作系统(国产Linux),其他操作系统操作步骤一样！略有差别**
 
 ## 搭建步骤
 ### 安装Hexo
@@ -65,4 +65,9 @@ hexo clean && hexo g && hexo d
 ```
 最后在浏览器输入username.github.io即可访问博客。
 关于3-hexo主图的使用请参照[3-hexo使用说明](https://yelog.org/2017/03/23/3-hexo-instruction/)
- good luck
+ ## 关于md文件插入本地图片在GitHub Pages无法显示的问题说明
+ 由于hexo3版本后对很多插件支持有问题，hexo-asset-image插件在处理data.permalink链接时出现路径错误，把年月去掉了，导致最后生成的路径为%d/xxx/xxx需要对其做兼容处理。通过判断当前版本是否等于3的版本做不同的路径分割。因此，这里提供一个已经修复这个bug的插件
+ ```
+npm install https://github.com/7ym0n/hexo-asset-image --save
+ ```
+之后重新编译发布即可。
