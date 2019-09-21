@@ -7,7 +7,7 @@
 ## 关于华夏熊猫
 **华夏熊猫** 是Jackie的个人技术站。希望能够留下一些自己学习的印记,并期待能够帮助到你！未来华夏熊猫也会出一些技术视频，敬请关注！
 
-到目前为止已经写了<code class="article_number"></code>篇文章， 共<code class="site_word_count"></code>字。
+到目前为止已经写了<code class="article_number"></code>篇文章,共<code class="site_word_count"></code>字。
 
 本站访问人数：<code class="site_uv"></code>人次 ， 访问量：<code class="site_pv"></code>次
 
