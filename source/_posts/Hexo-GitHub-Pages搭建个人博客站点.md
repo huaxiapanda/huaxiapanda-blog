@@ -70,4 +70,4 @@ hexo clean && hexo g && hexo d
  ```
 npm install https://github.com/7ym0n/hexo-asset-image --save
  ```
-之后重新编译发布即可。
+之后重新编译发布即可。然后刷新浏览器即可！
