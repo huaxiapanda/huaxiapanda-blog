@@ -1,5 +1,6 @@
 ---
 title: Hexo+GitHub Pages搭建个人博客站点
+permalink: Hexo+GitHub Pages搭建个人博客站点
 date: 2019-09-21 18:21:50
 categories: 工具
 tags: hexo,GitHub Pages

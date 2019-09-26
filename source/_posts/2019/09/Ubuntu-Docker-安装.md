@@ -1,5 +1,6 @@
 ---
 title: Ubuntu Docker 安装
+permalink: Ubuntu Docker 安装
 date: 2019-09-24 19:21:23
 categories: 工具
 tags: Docker
