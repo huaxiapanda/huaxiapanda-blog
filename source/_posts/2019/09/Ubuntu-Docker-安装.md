@@ -7,6 +7,7 @@ categories:
   - docker
 tags: Docker
 ---
+@[toc]
 # 前提条件
 Docker要求ubuntu系统的内核版本高于3.10，在进行浏览本页面时，请首先查看你的系统内核版本。如果不符合要求，请升级内核版本，或者更换其他安装方法。通过uname -a查看系统内核版本。
 ```shell
