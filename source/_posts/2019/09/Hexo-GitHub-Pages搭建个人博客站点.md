@@ -82,7 +82,7 @@ npm install hexo-generator-feed
 ```
 * 启用插件
 在博客工程的根目录下的_config.xml文件中添加如下内容:
-```xml
+```
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 plugins:
@@ -95,7 +95,7 @@ feed:
 ```
 ![图9](Hexo-GitHub-Pages搭建个人博客站点/nine.png)
 之后需要修改themes/3-hexo目录下的_config.xml文件
-```xml
+```
 link:
   theme: color # 链接样式，color: 彩色图标  white: 黑白图标
   items:
