@@ -11,6 +11,7 @@ blog_path: /
 link:
   theme: color # 链接样式，color: 彩色图标  white: 黑白图标
   items:
+    rss: /atom.xml
     github: https://github.com/huaxiapanda
     email: huaxiapanda@163.com
     qq: 805056750
