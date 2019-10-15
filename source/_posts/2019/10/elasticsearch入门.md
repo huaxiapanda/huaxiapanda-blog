@@ -129,13 +129,341 @@ employee.setJoinDate(new Date());
 ## 2.2 基础API
 ### 2.2.1 快速查看集群的健康状态
 es提供了一套api,叫做cat api,可以查看es中各种各样的数据:
-```
+```bash
 GET /_cat/health?v
 ```
 ![健康状态结果](elasticsearch入门/2.png)
-+ 如何快速了解集群的健康状态?green、yellow、red?
++ **如何快速了解集群的健康状态?green、yellow、red?**
   + green:每个索引的primary shard和replica shard都是active状态的。
   + yellow:每个索引的primary shard都是active状态的，但是部分replica shard不是active状态，处于不可用的状态。
   + red:不是所有索引的primary shard都是active状态的，部分索引有数据丢失了。
-+ 为什么现在会处于一个yellow状态？<br/>
++ **为什么现在会处于一个yellow状态？<br/>**
 &emsp;&emsp;我们现在就一个笔记本电脑，就启动了一个es进程，相当于就只有一个node。现在es中有一个index，就是kibana自己内置建立的index。由于默认的配置是给每个index分配5个primary shard和5个replica shard，而且primary shard和replica shard不能在同一台机器上（为了容错）。现在kibana自己建立的index是1个primary shard和1个replica shard。当前就一个node，所以只有1个primary shard被分配了和启动了，但是一个replica shard没有第二台机器去启动。
+### 2.2.2 快速查看集群中有哪些索引
+```bash
+GET /_cat/indices?v
+```
+![查看集群中的索引](elasticsearch入门/3.png)
+## 2.3 简单的索引操作
+### 2.3.1 创建一个索引
+```bash
+# 创建一个新的索引
+PUT /test_index?pretty
+```
+![创建索引](elasticsearch入门/4.png)
+### 2.3.2 删除一个索引
+```bash
+# 删除一个索引
+DELETE /test_index?pretty
+```
+![删除索引](elasticsearch入门/5.png)
+## 2.4 ES之增删改查(CRUD)操作API
+&emsp;&emsp;es的增删改查操作使用商品的增删改查为例子
+### 2.4.1 新增商品
+语法:<br>
+```bash
+# 向es中插入一行记录
+PUT /index/type/id
+{
+  "json数据"
+}
+```
+案例:<br>
+```bash
+PUT /ecommerce/product/1
+{
+  "name":"gaolujie yagao",
+  "desc":"gaoxiao meibai",
+  "price":25,
+  "producer":"gaolujie producer",
+  "tags":["meibai","fangzhu"]
+}
+PUT /ecommerce/product/2
+{
+	"name":"jiajieshi yagao",
+    "desc":"youxiao fangzhu",
+    "price":25,
+    "producer":"jiajieshi producer",
+     "tags":["fangzhu"]
+}
+PUT /ecommerce/product/3
+{
+	"name":"zhonghua yagao",
+    "desc":"caoben zhiwu",
+    "price":40,
+    "producer":"zhonghua producer",
+     "tags":["qingxin"]
+}
+```
+![插入一行记录](elasticsearch入门/6.png)<br />
+
++ index 插入es的库名称
++ type: 插入es的表名称
++ id: 插入es的行标识
++ version: 插入es的数据版本
++ result: 插入es的结果,created 代表新增
++ shards: 插入es的一些shards信息
+  + total: 总共两个shard
+  + successful: 成功1个,因为只启动了一个节点,目前只有一个primary shard,没有replica shard
+  + failed: 失败0个
++ created: 新增结果,true代表成功,false代表失败<br />
+
+### 2.4.2 查询商品文档
+语法:<br>
+```bash
+//查询商品文档数据
+GET /index/type/id
+```
+案例:<br>
+```bash
+GET /ecommerce/product/1
+```
+![查询语法结果](elasticsearch入门/7.png)<br>
+
++index: 查询es的库名称
++type: 查询es的表名称
++id: 查询es的行标识
++version: 查询es的数据版本
++ found: 是否查询到记录,true是查询到记录,false是没有查询到记录.
++source: 查询到的该条记录的内容<br/>
+
+### 2.4.3 修改记录_替换文档
+案例:<br>
+```bash
+PUT /ecommerce/product/1
+{
+    "name":"jiaqiangban gaolujie yaoga"
+}
+```
+![替换文档](elasticsearch入门/8.png)<br/>
+
++ index: 查询es的库名称
++ type: 查询es的表名称
++ id: 查询es的行标识
++ version: 查询es的数据版本
++ result: 结果是更新<br>
+
+**替换方式有一个不好，即使必须带上所有的field,才能去进行信息的修改**
+```bash
+GET /ecommerce/product/1
+```
+![查询结果](elasticsearch入门/9.png)
+由上图可以看出,我们只修改了一个name字段,结果其他的字段都被覆盖掉了.但是这不是我们想要的结果.
+### 2.4.4 修改记录_更新文档
+案例:<br>
+```bash
+PUT /ecommerce/product/1
+{
+	"name":"gaolujie yagao",
+    "desc":"gaoxiao meibai",
+    "price":30,
+    "producer":"gaolujie producer",
+    "tags":["meibai","fangzhu"]
+}
+# 使用post进行文档的指定字段的更新
+POST /ecommerce/product/1/_update
+{
+  "doc":{
+    "name":"jiaqiangban gaolujie yagao"
+  }
+}
+```
+![指定字段更新](elasticsearch入门/10.png)
+### 2.4.5 删除文档
+```bash
+# 删除文档
+DELETE /ecommerce/product/1
+```
+![删除结果](elasticsearch入门/11.png)
+再次执行删除操作出现如下结果:
+![删除结果](elasticsearch入门/12.png)
+执行查询操作:
+![查询结果](elasticsearch入门/13.png)
+# 3 Elasticsearch查询方式
+## 3.1 query string search
+使用查询字符串进行搜索所有的商品信息
+```bash
+GET /ecommerce/product/_search
+```
+查询结果如下所示:
+```javascript
+{
+  "took": 29,
+  "timed_out": false,
+  "_shards": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0
+  },
+  "hits": {
+    "total": 3,
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "ecommerce",
+        "_type": "product",
+        "_id": "2",
+        "_score": 1,
+        "_source": {
+          "name": "jiajieshi yagao",
+          "desc": "youxiao fangzhu",
+          "price": 25,
+          "producer": "jiajieshi producer",
+          "tags": [
+            "fangzhu"
+          ]
+        }
+      },
+      {
+        "_index": "ecommerce",
+        "_type": "product",
+        "_id": "1",
+        "_score": 1,
+        "_source": {
+          "name": "gaolujie yagao",
+          "desc": "gaoxiao meibai",
+          "price": 30,
+          "producer": "gaolujie producer",
+          "tags": [
+            "meibai",
+            "fangzhu"
+          ]
+        }
+      },
+      {
+        "_index": "ecommerce",
+        "_type": "product",
+        "_id": "3",
+        "_score": 1,
+        "_source": {
+          "name": "zhonghua yagao",
+          "desc": "caoben zhiwu",
+          "price": 40,
+          "producer": "zhonghua producer",
+          "tags": [
+            "qingxin"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
++ took: 查询花费的时间(ms)
++ timed_out: 是否超时 false表示没有,true表示超时
++ shards: 查询的shard信息
++ hits: 查询命中信息
+  + total: 总共几条记录
+  + max_score: 匹配分数
+  + hits: 命中的所有记录
+    + index: 库
+    + type: 表
+    + id: 行
+    + score: 匹配分数
+    + source: 信息<br/><br/>
+
+## 3.2 Query DSL
+**DSL:Domain Specified Language，特定领域的语言**<br>
+http request body：请求体，可以用json的格式来构建查询语法，比较方便，可以构建各种复杂的语法，比query string search肯定强大多了.
+### 3.2.1 查询所有的商品
+```bash
+GET /ecommerce/product/_search
+{
+  "query": {"match_all": {}}
+}
+```
+### 3.2.2 按照指定条件查询
+案例:查询商品名称中包含yagao的商品,并且按照商品价格降序排序
+```bash
+GET /ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "yagao"
+    }
+  },
+  "sort": [
+    {
+      "price": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+```
+### 3.2.3 分页查询
+```bash
+GET /ecommerce/product/_search
+{
+  "query": {"match_all": {}},
+  "from": 0,
+  "size": 2
+}
+```
+### 3.2.4 查询指定字段信息
+```bash
+GET /ecommerce/product/_search
+{
+  "query": {"match_all": {}},
+  "_source": ["name","price"]
+}
+```
+### 3.2.5 高级查询
++ query filter<br>
+案例:搜索商品名称包含yagao,而且售价大于25的商品
+```bash
+GET /ecommerce/product/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match":{
+          "name":"yagao"
+        }
+      },
+      "filter": {
+        "range": {
+          "price": {
+            "gt": 25
+          }
+        }
+      }
+    }
+  }
+}
+```
++ full-text search<br>
+全文检索
+```bash
+GET /ecommerce/product/_search
+{
+  "query": {"match": {
+    "producer": "yagao producer"
+  }}
+}
+```
++ phrase search<br>
+短语搜索
+```bash
+GET /ecommerce/product/_search
+{
+  "query": {"match_phrase": {
+    "producer": "yagao producer"
+  }}
+}
+```
+<br/>
+
+**总结:跟全文检索相对应，相反，全文检索会将输入的搜索串拆解开来，去倒排索引里面去一一匹配，只要能匹配上任意一个拆解后的单词，就可以作为结果返回
+phrase search，要求输入的搜索串，必须在指定的字段文本中，完全包含一模一样的，才可以算匹配，才能作为结果返回**
++ highlight search<br>
+高亮搜索结果
+```bash
+GET /ecommerce/product/_search
+{
+  "query": {"match": {
+    "producer": "producer"
+  }},
+  "highlight": {"fields": {"producer":{}}}
+}
+```
