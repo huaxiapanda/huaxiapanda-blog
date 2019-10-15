@@ -2,7 +2,9 @@
 title: elasticsearch入门
 permalink: elasticsearch入门
 date: 2019-10-14 17:48:15
-categories: 大数据
+categories:
+  - 大数据
+  - es
 tags: elasticsearch
 ---
 @[toc]
